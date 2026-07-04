@@ -1,0 +1,2099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Laxmi Frames</title>
+
+    <!-- ========================================== -->
+    <!-- EXTERNAL RESOURCES                         -->
+    <!-- ========================================== -->
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicon -->
+    <link rel="icon" href="images/main.png" type="image/png">
+
+
+	<link rel="stylesheet" href="admin.css">
+	<link rel="stylesheet" href="admin-dashboard.css">
+	<link rel="stylesheet" href="admin-products.css">
+
+</head>
+
+
+<!-- ============================================== -->
+<!-- BODY                                           -->
+<!-- ============================================== -->
+
+<body>
+
+    <!-- ========================================== -->
+    <!-- LOGIN SCREEN                               -->
+    <!-- ========================================== -->
+
+    <div class="login-screen" id="loginScreen">
+    <div class="login-box" id="loginBox">
+        <div class="login-logo"><i class="fas fa-om"></i></div>
+        <h1>Welcome Back</h1>
+        <p class="subtitle">Laxmi Frames & Pooja Samagri Store</p>
+        
+        <div class="input-group">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="adminEmail" placeholder="Admin email address" onkeypress="if(event.key==='Enter')login()">
+        </div>
+        
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="adminPassword" placeholder="Password" onkeypress="if(event.key==='Enter')login()">
+        </div>
+        
+        <button onclick="login()"><i class="fas fa-sign-in-alt"></i> Login to Dashboard</button>
+        
+        <p style="margin-top: 15px; font-size: 0.75rem; color: var(--text-light);">
+            <i class="fas fa-shield-alt"></i> Secured by Supabase Auth
+        </p>
+    </div>
+</div>
+
+
+    <!-- ========================================== -->
+    <!-- ADMIN DASHBOARD LAYOUT                     -->
+    <!-- ========================================== -->
+
+    <div class="admin-layout" id="adminLayout">
+
+
+        <!-- ====================================== -->
+        <!-- SIDEBAR                                -->
+        <!-- ====================================== -->
+
+        <div class="sidebar" id="sidebar">
+
+            <!-- Sidebar Header / Brand -->
+            <div class="sidebar-header">
+    <a href="#" class="sidebar-brand">
+        <div class="brand-icon" style="overflow:hidden; padding:0;">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin&backgroundColor=D4A017" 
+                 alt="Admin" 
+                 id="sidebarAvatar"
+                 style="width:100%; height:100%; object-fit:cover; border-radius:12px;"
+                 onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-user\'></i>'">
+        </div>
+        <div class="brand-text">
+            <h3>Laxmi Frames</h3>
+            <span>Admin Panel</span>
+        </div>
+    </a>
+</div>
+
+            <!-- Sidebar Navigation Menu -->
+            <div class="sidebar-menu">
+                
+                <a href="#" class="active" onclick="showTab('dashboard', this)"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a href="#" onclick="showTab('products', this)"><i class="fas fa-box"></i> Products <span class="badge-count" id="sidebarProductCount">0</span></a>
+                <a href="#" onclick="showTab('orders', this)"><i class="fas fa-shopping-bag"></i> Orders <span class="badge-count" id="sidebarOrderCount">0</span></a>
+                <a href="#" onclick="showTab('profile', this)"><i class="fas fa-user-circle"></i> Profile</a>
+		<a href="#" onclick="showTab('recyclebin', this)">
+    <i class="fas fa-trash-restore"></i> Recycle Bin 
+    <span class="badge-count" id="recycleCount">0</span>
+</a>
+            </div>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <p> Laxmi Frames Admin</p>
+            </div>
+
+        </div>
+
+
+        <!-- ====================================== -->
+        <!-- SIDEBAR MOBILE OVERLAY                 -->
+        <!-- ====================================== -->
+
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+
+        <!-- ====================================== -->
+        <!-- MAIN CONTENT AREA                      -->
+        <!-- ====================================== -->
+
+        <div class="main-content">
+
+
+            <!-- ================================== -->
+            <!-- TOP BAR                            -->
+            <!-- ================================== -->
+
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                    <div class="page-title">
+                        <h1 id="pageTitle">Dashboard</h1>
+                        <p id="pageSubtitle">Overview of our store</p>
+                    </div>
+                </div>
+                <div class="top-bar-right">
+                    <button class="top-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
+                    <button class="top-btn" onclick="refreshData()" title="Refresh Data"><i class="fas fa-sync-alt"></i></button>
+                    <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+
+
+            <!-- ================================== -->
+            <!-- CONTENT AREA                       -->
+            <!-- ================================== -->
+
+            <div class="content-area">
+
+
+                <!-- ============================== -->
+                <!-- DASHBOARD TAB                  -->
+                <!-- ============================== -->
+
+                <div class="tab-content active" id="dashboard">
+
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon gold"><i class="fas fa-box"></i></div>
+                            <div class="stat-info">
+                                <h3 id="totalProducts">0</h3>
+                                <p>Total Products</p>
+                                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> <span>Active inventory</span></div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon blue"><i class="fas fa-shopping-bag"></i></div>
+                            <div class="stat-info">
+                                <h3 id="totalOrders">0</h3>
+                                <p>Total Orders</p>
+                                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> <span>All time orders</span></div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                            <div class="stat-info">
+                                <h3 id="inStock">0</h3>
+                                <p>In Stock</p>
+                                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> <span>Available now</span></div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon red"><i class="fas fa-rupee-sign"></i></div>
+                            <div class="stat-info">
+                                <h3 id="totalRevenue">₹0</h3>
+                                <p>Total Revenue</p>
+                                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> <span>Lifetime sales</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category Breakdown -->
+                    <div class="cat-grid" id="categoryGrid">
+                        <!-- Dynamic content -->
+                    </div>
+
+                    <!-- Sales Chart -->
+                    <div class="chart-section">
+                        <div class="chart-header">
+                            <h2><i class="fas fa-chart-bar" style="color:var(--primary);margin-right:8px"></i> Sales Overview</h2>
+                            <div class="chart-filters">
+                                <button class="chart-filter active" onclick="updateChart('week', this)">Week</button>
+                                <button class="chart-filter" onclick="updateChart('month', this)">Month</button>
+                                <button class="chart-filter" onclick="updateChart('year', this)">Year</button>
+                            </div>
+                        </div>
+                        <div class="chart-container" id="salesChart">
+                            <div class="chart-bars" id="chartBars">
+                                <!-- Dynamic bars -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Orders -->
+                    <div class="section-card">
+                        <div class="section-header-card">
+                            <h2><i class="fas fa-clock-rotate-left"></i> Recent Orders</h2>
+                            <button class="btn-outline-sm" onclick="showTab('orders', document.querySelectorAll('.sidebar-menu a')[2])">View All <i class="fas fa-arrow-right"></i></button>
+                        </div>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentOrdersTable">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <!-- ============================== -->
+                <!-- PRODUCTS TAB                   -->
+                <!-- ============================== -->
+
+                <div class="tab-content" id="products">
+                    <div class="section-card">
+                        <div class="section-header-card">
+                            <h2><i class="fas fa-box-open"></i> All Products</h2>
+                            <div class="section-actions">
+                                <div class="search-box">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="productSearch" placeholder="Search products..." oninput="filterProducts()">
+                                </div>
+                                <button class="btn-outline-sm" onclick="filterByCategory('all')"><i class="fas fa-filter"></i> All</button>
+                                <button class="btn-outline-sm" onclick="filterByCategory('frames')"><i class="fas fa-image"></i> Frames</button>
+                                <button class="btn-outline-sm" onclick="filterByCategory('samagri')"><i class="fas fa-leaf"></i> Samagri</button>
+                                <button class="btn-outline-sm" onclick="filterByCategory('canvas')"><i class="fas fa-mosque"></i> Canvas & Posters</button>
+                                <button class="btn-primary-sm" onclick="openProductModal()"><i class="fas fa-plus"></i> Add Product</button>
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width:50px;text-align:center"><i class="fas fa-sort" title="Sort Order"></i></th>
+                                        <th>Product</th>
+                                        <th>Category</th>
+                                        <th>Price</th>
+                                        <th>Stock</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productsTable">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pagination" id="productsPagination">
+                            <!-- Dynamic pagination -->
+                        </div>
+                    </div>
+                </div>
+
+
+
+<div class="tab-content" id="recyclebin">
+    <div class="section-card">
+        <div class="section-header-card">
+            <h2><i class="fas fa-trash-restore"></i> Recycle Bin</h2>
+            <div class="section-actions">
+    <button class="btn-outline-sm" onclick="cleanupOldDeleted()">
+        <i class="fas fa-broom"></i> Clean Old (30d)
+    </button>
+    <button class="btn-danger-sm" onclick="emptyRecycleBin()">
+        <i class="fas fa-trash"></i> Empty Permanently
+    </button>
+</div>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Deleted</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="recycleTable">
+                    <!-- Dynamic -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+                <!-- ============================== -->
+                <!-- ORDERS TAB                     -->
+                <!-- ============================== -->
+
+                <div class="tab-content" id="orders">
+                    <div class="section-card">
+                        <div class="section-header-card">
+                            <h2><i class="fas fa-shopping-bag"></i> All Orders</h2>
+                            <div class="section-actions">
+                                <div class="search-box">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="orderSearch" placeholder="Search orders..." oninput="filterOrders()">
+                                </div>
+                                <button class="btn-outline-sm" onclick="filterOrderStatus('all')"><i class="fas fa-list"></i> All</button>
+                                <button class="btn-outline-sm" onclick="filterOrderStatus('pending')"><i class="fas fa-clock"></i> Pending</button>
+                                <button class="btn-outline-sm" onclick="filterOrderStatus('processing')"><i class="fas fa-spinner"></i> Processing</button>
+                                <button class="btn-outline-sm" onclick="filterOrderStatus('delivered')"><i class="fas fa-check"></i> Delivered</button>
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Contact</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTable">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pagination" id="ordersPagination">
+                            <!-- Dynamic pagination -->
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- ============================== -->
+                <!-- PROFILE TAB                    -->
+                <!-- ============================== -->
+
+                <div class="tab-content" id="profile">
+                    <div class="profile-grid">
+
+                        <!-- Profile Left Sidebar -->
+                        <div class="profile-card">
+                            <div class="profile-header">
+                                <div class="profile-avatar" onclick="document.getElementById('avatarInput').click()" title="Click to change photo">
+    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin&backgroundColor=D4A017" alt="Admin" id="profileAvatarImg" onerror="this.style.display='none';this.parentElement.innerHTML='<i class=\'fas fa-user\'></i>'">
+    <div class="avatar-upload"><i class="fas fa-camera"></i> Change</div>
+</div>
+                                <input type="file" id="avatarInput" class="avatar-input" accept="image/*" onchange="updateAvatar(this)">
+                                <h3 id="profileName">Admin</h3>
+                                <p id="profileRole">Store Manager</p>
+                            </div>
+                            <div class="profile-body">
+                                <ul class="profile-menu">
+                                    <li class="active" onclick="showProfileSection('personal', this)"><i class="fas fa-user"></i> Personal Info</li>
+                                    <li onclick="showProfileSection('security', this)"><i class="fas fa-shield-alt"></i> Security</li>
+                                    <li onclick="showProfileSection('activity', this)"><i class="fas fa-history"></i> Activity Log</li>
+                                    <li onclick="showProfileSection('settings', this)"><i class="fas fa-cog"></i> Preferences</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Profile Right Content -->
+                        <div class="profile-card">
+
+                            <!-- Personal Info Section -->
+                            <div class="profile-content profile-section active" id="profilePersonal">
+
+
+                                
+                                <h2><i class="fas fa-user"></i> Personal Information</h2>
+
+                                <!-- Profile Stats -->
+                                <div class="profile-stats">
+                                    <div class="profile-stat">
+                                        <i class="fas fa-box"></i>
+                                        <h4 id="statProducts">0</h4>
+                                        <p>Products Added</p>
+                                    </div>
+                                    <div class="profile-stat">
+                                        <i class="fas fa-shopping-bag"></i>
+                                        <h4 id="statOrders">0</h4>
+                                        <p>Orders Received</p>
+                                    </div>
+                                    <div class="profile-stat">
+                                        <i class="fas fa-calendar"></i>
+                                        <h4 id="statDays">0</h4>
+                                        <p>Days Active</p>
+                                    </div>
+                                </div>
+
+                                <!-- Security & Login Info -->
+                                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-bottom:25px">
+                                                                            <div style="background:var(--card-bg);padding:15px;border-radius:12px;border:1px solid var(--border);display:flex;align-items:center;gap:12px">
+                                            <i class="fas fa-shield-alt" style="color:var(--success);font-size:1.3rem"></i>
+                                            <div>
+                                                <div style="font-size:0.75rem;color:var(--text-light)">Security Status</div>
+                                                <div style="font-weight:600;color:var(--text);font-size:0.9rem">Secure</div>
+                                            </div>
+                                        </div>
+                                        <div style="background:var(--card-bg);padding:15px;border-radius:12px;border:1px solid var(--border);display:flex;align-items:center;gap:12px">
+                                            <i class="fas fa-clock" style="color:var(--info);font-size:1.3rem"></i>
+                                            <div>
+                                                <div style="font-size:0.75rem;color:var(--text-light)">Last Login</div>
+                                                <div style="font-weight:600;color:var(--text);font-size:0.9rem" id="lastLogin">Just now</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Personal Info Form -->
+                                    <form class="profile-form" onsubmit="updateProfile(event)">
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Full Name</label>
+                                                <input type="text" id="profileFullName" value="Admin" placeholder="Your full name">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Display Name</label>
+                                                <input type="text" id="profileDisplayName" value="Admin" placeholder="Display name">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Email Address</label>
+                                                <input type="email" id="profileEmail" value="admin@laxmiframes.com" placeholder="your@email.com">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Phone Number</label>
+                                                <input type="tel" id="profilePhone" value="" placeholder="Your phone number">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Store Name</label>
+                                            <input type="text" id="profileStoreName" value="Laxmi Frames & Pooja Samagri Store" placeholder="Your store name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Bio / About</label>
+                                            <input type="text" id="profileBio" value="Managing spiritual products and puja samagri since 1989." placeholder="Short bio">
+                                        </div>
+                                        <button type="submit" class="btn-save"><i class="fas fa-save"></i> Save Changes</button>
+                                    </form>
+
+                                </div>
+
+
+                                <!-- ================================== -->
+                                <!-- SECURITY SECTION                   -->
+                                <!-- ================================== -->
+
+                                <div class="profile-content profile-section" id="profileSecurity">
+                                    <h2><i class="fas fa-shield-alt"></i> Security Settings</h2>
+
+                                    <form class="profile-form" onsubmit="updatePassword(event)">
+                                        <div class="form-group">
+                                            <label>Current Password</label>
+                                            <input type="password" id="currentPassword" placeholder="Enter current password" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>New Password</label>
+                                                <input type="password" id="newPassword" placeholder="Enter new password" required minlength="6">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Confirm New Password</label>
+                                                <input type="password" id="confirmPassword" placeholder="Confirm new password" required>
+                                            </div>
+                                        </div>
+
+                                        <!-- Password Strength Meter -->
+                                        <div style="margin-top:8px;margin-bottom:15px">
+                                            <div style="display:flex;gap:4px;height:4px;margin-bottom:6px">
+                                                <div class="strength-bar" style="flex:1;background:var(--border);border-radius:2px;transition:background 0.3s"></div>
+                                                <div class="strength-bar" style="flex:1;background:var(--border);border-radius:2px;transition:background 0.3s"></div>
+                                                <div class="strength-bar" style="flex:1;background:var(--border);border-radius:2px;transition:background 0.3s"></div>
+                                                <div class="strength-bar" style="flex:1;background:var(--border);border-radius:2px;transition:background 0.3s"></div>
+                                            </div>
+                                            <span id="strengthText" style="font-size:0.75rem;color:var(--text-light)">Type a password...</span>
+                                        </div>
+
+                                        <button type="submit" class="btn-save"><i class="fas fa-key"></i> Update Password</button>
+                                    </form>
+
+                                </div>
+
+
+                                <!-- ================================== -->
+                                <!-- ACTIVITY LOG SECTION               -->
+                                <!-- ================================== -->
+
+                                <div class="profile-content profile-section" id="profileActivity">
+                                    <h2><i class="fas fa-history"></i> Recent Activity</h2>
+                                    <ul class="activity-list" id="activityList">
+                                        <!-- Dynamic content -->
+                                    </ul>
+                                </div>
+
+
+                                <!-- ================================== -->
+                                <!-- PREFERENCES SECTION                -->
+                                <!-- ================================== -->
+
+                                <div class="profile-content profile-section" id="profileSettings">
+                                    <h2><i class="fas fa-cog"></i> Preferences</h2>
+
+                                    <form class="profile-form" onsubmit="updatePreferences(event)">
+                                        <div class="form-group">
+                                            <label class="checkbox-label" style="display:flex;align-items:center;gap:10px;cursor:pointer">
+                                                <input type="checkbox" id="prefEmailNotif" checked style="width:auto">
+                                                <span>Email notifications for new orders</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="checkbox-label" style="display:flex;align-items:center;gap:10px;cursor:pointer">
+                                                <input type="checkbox" id="prefSound" style="width:auto">
+                                                <span>Sound alerts</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="checkbox-label" style="display:flex;align-items:center;gap:10px;cursor:pointer">
+                                                <input type="checkbox" id="prefAutoSave" checked style="width:auto">
+                                                <span>Auto-save product changes</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Default Items Per Page</label>
+                                            <select id="prefItemsPerPage" style="width:100%;padding:12px;border:2px solid var(--input-border);border-radius:10px;background:var(--input-bg);color:var(--text);font-family:'Poppins',sans-serif">
+                                                <option value="8">8 items</option>
+                                                <option value="12">12 items</option>
+                                                <option value="16">16 items</option>
+                                                <option value="24">24 items</option>
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn-save"><i class="fas fa-save"></i> Save Preferences</button>
+
+                                        <!-- Data Export -->
+                                        <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+                                            <h4 style="font-size:0.9rem;color:var(--text);margin-bottom:10px"><i class="fas fa-download" style="color:var(--primary);margin-right:6px"></i> Data Export</h4>
+                                            <button type="button" class="btn-outline-sm" onclick="exportData()" style="width:100%;justify-content:center">
+                                                <i class="fas fa-file-export"></i> Export All Data (JSON)
+                                            </button>
+                                        </div>
+
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ============================================== -->
+    <!-- MODALS                                         -->
+    <!-- ============================================== -->
+
+
+    <!-- ========================================== -->
+    <!-- PRODUCT ADD/EDIT MODAL                     -->
+    <!-- ========================================== -->
+
+    <div class="modal-overlay" id="productModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle"><i class="fas fa-plus-circle" style="color:var(--primary);margin-right:8px"></i> Add Product</h2>
+                <button class="modal-close" onclick="closeProductModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="productId">
+                <div class="form-row">
+                    <div class="form-group" style="grid-column:1/-1">
+                        <label>Product Name *</label>
+                        <input type="text" id="productName" placeholder="e.g. Lord Shiva Photo Frame">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Price (₹) *</label>
+                        <input type="number" id="productPrice" placeholder="303">
+                    </div>
+                    <div class="form-group">
+                        <label>Original Price (₹)</label>
+                        <input type="number" id="productOriginalPrice" placeholder="399">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Discount</label>
+                        <input type="text" id="productDiscount" placeholder="24% OFF">
+                    </div>
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="productCategory">
+                            <option value="frames">God Frames</option>
+                            <option value="samagri">Puja Samagri</option>
+                            <option value="canvas">Canvas & Posters</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Badge (optional)</label>
+                        <input type="text" id="productBadge" placeholder="Bestseller, Popular, New">
+                    </div>
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <input type="text" id="productRating" placeholder="4.2" value="4.2">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="productDescription" placeholder="Describe your product..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Features (comma separated)</label>
+                    <input type="text" id="productFeatures" placeholder="Premium quality, Durable frame, Size: 12x18">
+                </div>
+                <div class="form-group">
+                    <label>Product Image</label>
+                    <input type="file" id="productImage" accept="image/*" onchange="previewImage(this)">
+                    <div class="image-preview-area" id="imagePreview" onclick="document.getElementById('productImage').click()">
+                        <div class="placeholder">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Click to upload image</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="productInStock" checked> In Stock
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeProductModal()">Cancel</button>
+                <button class="btn-save" onclick="saveProduct()"><i class="fas fa-save"></i> Save Product</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- ORDER DETAIL MODAL                         -->
+    <!-- ========================================== -->
+
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal" style="max-width:500px">
+            <div class="modal-header">
+                <h2><i class="fas fa-receipt" style="color:var(--primary);margin-right:8px"></i> Order Details</h2>
+                <button class="modal-close" onclick="closeOrderModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="orderModalBody">
+                <!-- Dynamic content -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeOrderModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- DELETE CONFIRMATION MODAL                  -->
+    <!-- ========================================== -->
+
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal" style="max-width:400px">
+            <div class="modal-header">
+                <h2><i class="fas fa-exclamation-triangle" style="color:var(--danger);margin-right:8px"></i> Confirm Delete</h2>
+                <button class="modal-close" onclick="closeDeleteModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="text-align:center">
+                <i class="fas fa-trash-alt" style="font-size:3rem;color:var(--danger);margin-bottom:15px;display:block"></i>
+                <p style="color:var(--text-light);font-size:0.95rem">Are you sure you want to delete this product? This action cannot be undone.</p>
+                <input type="hidden" id="deleteProductId">
+            </div>
+            <div class="modal-footer" style="justify-content:center">
+                <button class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn-danger-sm" onclick="confirmDelete()"><i class="fas fa-trash"></i> Yes, Delete</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- TOAST NOTIFICATION                         -->
+    <!-- ========================================== -->
+
+    <div class="toast" id="toast"></div>
+
+
+    <!-- ============================================== -->
+    <!-- JAVASCRIPT                                     -->
+    <!-- ============================================== -->
+
+   <script type="module">
+    // ==========================================
+    // IMPORTS
+    // ==========================================
+    import { supabase } from './supabase-config.js';
+    import { getProducts, getProduct } from './products-loader.js';
+
+    // ==========================================
+    // AUTH STATE MANAGEMENT
+    // ==========================================
+    
+    let currentUser = null;
+    let isAdmin = false;
+
+    // Check auth state on load
+    async function checkAuth() {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session) {
+            currentUser = session.user;
+            // Verify this user is in admin table
+            const { data: adminData } = await supabase
+                .from('admin_users')
+                .select('email')
+                .eq('email', currentUser.email)
+                .single();
+            
+            if (adminData) {
+                isAdmin = true;
+                showDashboard();
+                showToast(`Welcome back, ${currentUser.email}!`, 'success');
+            } else {
+                // Not an admin - kick them out
+                await supabase.auth.signOut();
+                showToast('Access denied. Not an admin account.', 'error');
+            }
+        } else {
+            showLogin();
+        }
+    }
+
+    // Listen for auth changes
+    supabase.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_OUT') {
+        currentUser = null;
+        isAdmin = false;
+        showLogin();
+    }
+});
+
+    // ==========================================
+    // LOGIN / LOGOUT
+    // ==========================================
+
+    window.login = async function() {
+    const email = document.getElementById('adminEmail').value.trim();
+    const password = document.getElementById('adminPassword').value;
+    
+    if (!email || !password) {
+        showToast('Please enter email and password', 'error');
+        shakeLoginBox();
+        return;
+    }
+    
+    const btn = document.querySelector('.login-box button');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+    btn.disabled = true;
+    
+    try {
+        const loginPromise = supabase.auth.signInWithPassword({ email, password });
+        const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Request timed out. Check your internet.')), 15000)
+        );
+        
+        const { data, error } = await Promise.race([loginPromise, timeoutPromise]);
+        
+        if (error) {
+            showToast(error.message, 'error');
+            shakeLoginBox();
+            return;
+        }
+        
+        currentUser = data.user;
+        const { data: adminData, error: adminError } = await supabase
+            .from('admin_users')
+            .select('email')
+            .eq('email', currentUser.email)
+            .single();
+        
+        if (adminError || !adminData) {
+            await supabase.auth.signOut();
+            showToast('Access denied. Not an admin account.', 'error');
+            shakeLoginBox();
+            return;
+        }
+        
+
+
+	await supabase
+    .from('admin_users')
+    .update({ last_login: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) })
+    .eq('email', currentUser.email);
+	
+
+
+        isAdmin = true;
+        showToast(`Welcome back, ${currentUser.email}!`, 'success');
+        showDashboard();
+        
+    } catch (err) {
+        console.error('Login error:', err);
+        showToast('Login failed: ' + (err.message || 'Network error'), 'error');
+        shakeLoginBox();
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+};
+
+    window.logout = async function() {
+        await supabase.auth.signOut();
+        // Auth state change will handle UI
+    };
+
+    function showLogin() {
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('adminLayout').style.display = 'none';
+    }
+
+    function showDashboard() {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminLayout').style.display = 'block';
+        loadAllData();
+    }
+
+
+
+    // ==========================================
+    // LOGIN ANIMATION (Shake on error)
+    // ==========================================
+
+    function shakeLoginBox() {
+        const box = document.querySelector('.login-box');
+        box.style.animation = 'none';
+        box.offsetHeight; // Trigger reflow
+        box.style.animation = 'shake 0.5s ease';
+    }
+
+    // Add shake keyframes to document
+    const shakeStyle = document.createElement('style');
+    shakeStyle.textContent = `
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+    `;
+    document.head.appendChild(shakeStyle);
+
+
+
+    // ==========================================
+    // LOGIN UI UPDATE
+    // ==========================================
+
+    // Update login box to use email + password
+    function updateLoginUI() {
+        const loginBox = document.querySelector('.login-box');
+        loginBox.innerHTML = `
+            <div class="login-logo"><i class="fas fa-om"></i></div>
+            <h1>Welcome Back</h1>
+            <p class="subtitle">Laxmi Frames & Pooja Samagri Store</p>
+            
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="adminEmail" placeholder="Admin email" onkeypress="if(event.key==='Enter')login()">
+            </div>
+            
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="adminPassword" placeholder="Password" onkeypress="if(event.key==='Enter')login()">
+            </div>
+            
+            <button onclick="login()"><i class="fas fa-sign-in-alt"></i> Login to Dashboard</button>
+            
+            <p style="margin-top: 15px; font-size: 0.75rem; color: var(--text-light);">
+                <i class="fas fa-shield-alt"></i> Secured by Supabase Auth
+            </p>
+        `;
+    }
+
+    // Call this immediately
+    updateLoginUI();
+
+    // ==========================================
+    // THEME MANAGEMENT
+    // ==========================================
+
+    function initTheme() {
+        const saved = localStorage.getItem('adminTheme');
+        if (saved === 'dark') document.body.classList.add('dark-mode');
+        updateThemeIcon();
+    }
+
+    window.toggleTheme = function() {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('adminTheme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        updateThemeIcon();
+    };
+
+    function updateThemeIcon() {
+        const btn = document.getElementById('themeBtn');
+        if (document.body.classList.contains('dark-mode')) {
+            btn.innerHTML = '<i class="fas fa-sun"></i>';
+            btn.classList.add('active');
+        } else {
+            btn.innerHTML = '<i class="fas fa-moon"></i>';
+            btn.classList.remove('active');
+        }
+    }
+
+    // ==========================================
+    // SIDEBAR & NAVIGATION
+    // ==========================================
+
+    window.toggleSidebar = function() {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('sidebarOverlay').classList.toggle('active');
+    };
+
+    window.showTab = function(tabName, el) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+        document.getElementById(tabName).classList.add('active');
+        if (el) el.classList.add('active');
+
+        if (tabName === 'recyclebin') {
+            loadRecycleBin();
+        }
+
+        document.getElementById('pageTitle').textContent = tabName.charAt(0).toUpperCase() + tabName.slice(1);
+        const subtitles = {
+            dashboard: 'Overview of your store',
+            products: 'Manage your product inventory',
+            orders: 'Track and manage orders',
+            recyclebin: 'Restore or permanently delete items'
+        };
+        document.getElementById('pageSubtitle').textContent = subtitles[tabName] || '';
+        if (window.innerWidth <= 1024) toggleSidebar();
+    };
+
+    // ==========================================
+    // DATA LOADING
+    // ==========================================
+
+    window.refreshData = async function() {
+        const btn = document.querySelector('.top-bar-right .fa-sync-alt').parentElement;
+        btn.style.animation = 'spin 1s linear';
+        await loadAllData();
+        showToast('Data refreshed!', 'success');
+        setTimeout(() => btn.style.animation = '', 1000);
+    };
+
+    async function loadAllData() {
+        await Promise.all([loadDashboard(), loadProductsData(), loadOrdersData()]);
+        initProfile();
+    }
+
+    // ==========================================
+    // DASHBOARD
+    // ==========================================
+
+    async function loadDashboard() {
+        try {
+            const { data: products } = await supabase.from('products').select('*');
+            const { data: orders } = await supabase.from('orders').select('*');
+
+            allProducts = products || [];
+            allOrders = orders || [];
+
+            document.getElementById('totalProducts').textContent = products?.length || 0;
+            document.getElementById('sidebarProductCount').textContent = products?.length || 0;
+            document.getElementById('totalOrders').textContent = orders?.length || 0;
+            document.getElementById('sidebarOrderCount').textContent = orders?.length || 0;
+            document.getElementById('inStock').textContent = products?.filter(p => p.in_stock).length || 0;
+
+            const revenue = orders?.reduce((sum, o) => sum + (o.total_amount || 0), 0) || 0;
+            document.getElementById('totalRevenue').textContent = '₹' + revenue.toLocaleString('en-IN');
+
+            // Category breakdown
+            const cats = {};
+            products?.forEach(p => { cats[p.category] = (cats[p.category] || 0) + 1; });
+            const catIcons = { frames: 'fa-image', samagri: 'fa-leaf', canvas: 'fa-paint-brush' };
+            const catNames = { frames: 'God Frames', samagri: 'Puja Samagri', canvas: 'Canvas & Posters' };
+
+            document.getElementById('categoryGrid').innerHTML = Object.entries(cats).map(([cat, count]) => `
+                <div class="cat-card" onclick="filterByCategory('${cat}');showTab('products', document.querySelectorAll('.sidebar-menu a')[1])">
+                    <div class="cat-icon" style="background:linear-gradient(135deg,${cat==='frames'?'var(--primary-light),var(--primary)':cat==='samagri'?'var(--success-light),var(--success)':'var(--info-light),var(--info)'});color:#fff">
+                        <i class="fas ${catIcons[cat]||'fa-box'}"></i>
+                    </div>
+                    <div class="cat-info">
+                        <h4>${catNames[cat]||cat}</h4>
+                        <p>${count} products</p>
+                    </div>
+                    <div class="cat-count">${count}</div>
+                </div>
+            `).join('');
+
+            // Recent orders
+            const recent = (orders || []).slice(0, 5);
+            document.getElementById('recentOrdersTable').innerHTML = recent.length ? recent.map(o => {
+                const statusColors = { pending: 'badge-warning', processing: 'badge-info', shipped: 'badge-primary', delivered: 'badge-success', cancelled: 'badge-danger' };
+                return `<tr>
+                    <td><strong>#${o.id?.slice(0,8)||'N/A'}</strong></td>
+                    <td>${o.customer_name||'N/A'}<br><small style="color:var(--text-light)">${o.phone||''}</small></td>
+                    <td class="price-cell">₹${o.total_amount||0}</td>
+                    <td><span class="badge ${statusColors[o.status]||'badge-warning'}"><span class="status-dot ${o.status==='delivered'?'active':'inactive'}"></span> ${(o.status||'Pending').charAt(0).toUpperCase()+ (o.status||'pending').slice(1)}</span></td>
+                    <td style="color:var(--text-light);font-size:0.8rem">${new Date(o.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</td>
+                </tr>`;
+            }).join('') : '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-inbox"></i><h3>No orders yet</h3><p>Orders will appear here when customers place them</p></div></td></tr>';
+
+            renderChart('week');
+            loadRecycleCount();
+
+        } catch (err) {
+            console.error('Dashboard error:', err);
+            showToast('Error loading dashboard', 'error');
+        }
+    }
+
+    // ==========================================
+    // SALES CHART
+    // ==========================================
+
+    function renderChart(period) {
+        const barsContainer = document.getElementById('chartBars');
+        const orders = allOrders || [];
+        const now = new Date();
+        let data = [];
+        let labels = [];
+
+        if (period === 'week') {
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date(now);
+                d.setDate(d.getDate() - i);
+                const dayStr = d.toISOString().split('T')[0];
+                const dayOrders = orders.filter(o => o.created_at && o.created_at.startsWith(dayStr));
+                const dayTotal = dayOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
+                data.push(dayTotal);
+                labels.push(d.toLocaleDateString('en-IN', { weekday: 'short' }));
+            }
+        } else if (period === 'month') {
+            for (let i = 5; i >= 0; i--) {
+                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const monthStr = d.toISOString().slice(0, 7);
+                const monthOrders = orders.filter(o => o.created_at && o.created_at.startsWith(monthStr));
+                const monthTotal = monthOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
+                data.push(monthTotal);
+                labels.push(d.toLocaleDateString('en-IN', { month: 'short' }));
+            }
+        } else {
+            for (let i = 5; i >= 0; i--) {
+                const year = now.getFullYear() - i;
+                const yearOrders = orders.filter(o => o.created_at && o.created_at.startsWith(String(year)));
+                const yearTotal = yearOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
+                data.push(yearTotal);
+                labels.push(String(year));
+            }
+        }
+
+        const max = Math.max(...data, 1);
+
+        barsContainer.innerHTML = data.map((val, i) => `
+            <div class="chart-bar" style="height:${max > 0 ? (val/max)*100 : 0}%;animation:growUp 0.6s ${i*0.1}s ease both">
+                <span class="chart-bar-value">₹${val.toLocaleString('en-IN')}</span>
+                <span class="chart-bar-label">${labels[i]}</span>
+            </div>
+        `).join('');
+    }
+
+    window.updateChart = function(period, el) {
+        document.querySelectorAll('.chart-filter').forEach(b => b.classList.remove('active'));
+        if (el) el.classList.add('active');
+        renderChart(period);
+    };
+
+    // ==========================================
+    // PRODUCTS MANAGEMENT
+    // ==========================================
+
+    async function loadProductsData() {
+        try {
+            const { data: products, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+            if (error) throw error;
+            allProducts = products || [];
+            renderProductsTable();
+        } catch (err) {
+            console.error('Products error:', err);
+            showToast('Failed to load products', 'error');
+        }
+    }
+
+    function renderProductsTable() {
+        let filtered = allProducts;
+        if (currentProductFilter !== 'all') filtered = filtered.filter(p => p.category === currentProductFilter);
+        const search = document.getElementById('productSearch')?.value.toLowerCase() || '';
+        if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search));
+
+        filtered.sort((a, b) => {
+            const orderA = a.sort_order !== undefined ? a.sort_order : 999999;
+            const orderB = b.sort_order !== undefined ? b.sort_order : 999999;
+            return orderA - orderB;
+        });
+
+        const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
+        const start = (currentProductPage - 1) * ITEMS_PER_PAGE;
+        const pageItems = filtered.slice(start, start + ITEMS_PER_PAGE);
+
+        const tbody = document.getElementById('productsTable');
+        tbody.innerHTML = pageItems.length ? pageItems.map((p, index) => `
+            <tr draggable="true" data-id="${p.id}" data-sort="${p.sort_order !== undefined ? p.sort_order : (start + index + 1)}"
+                ondragstart="handleDragStart(event, this)" ondragenter="handleDragEnter(event, this)"
+                ondragover="handleDragOver(event, this)" ondrop="handleDrop(event, this)" ondragend="handleDragEnd(event, this)">
+                <td style="text-align:center">
+                    <div class="drag-handle" title="Drag to reorder"><i class="fas fa-grip-lines"></i></div>
+                </td>
+                <td>
+                    <div class="product-cell">
+                        <img src="${p.image||'images/placeholder.png'}" class="product-img" alt="${p.name}" onerror="this.src='images/placeholder.png'">
+                        <div class="product-info-cell">
+                            <h4>${p.name}</h4>
+                            <span>${p.slug||''}</span>
+                        </div>
+                    </div>
+                </td>
+                <td><span class="cat-tag ${p.category}"><i class="fas ${p.category==='frames'?'fa-image':p.category==='samagri'?'fa-leaf':'fa-gem'}"></i> ${p.category==='frames'?'God Frames':p.category==='samagri'?'Puja Samagri':'Canvas & Posters'}</span></td>
+                <td class="price-cell">₹${p.price}<span class="original">₹${p.original_price||p.price}</span></td>
+                <td><span class="badge ${p.in_stock?'badge-success':'badge-danger'}"><span class="status-dot ${p.in_stock?'active':'inactive'}"></span> ${p.in_stock?'In Stock':'Out of Stock'}</span></td>
+                <td>
+                    <div class="actions-cell">
+                        <button class="btn-action btn-edit" onclick="editProduct('${p.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="btn-action btn-toggle ${!p.in_stock?'out':''}" onclick="toggleStock('${p.id}', ${!p.in_stock})" title="Toggle Stock"><i class="fas fa-sync-alt"></i></button>
+                        <button class="btn-action btn-delete" onclick="openDeleteModal('${p.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        `).join('') : '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-box-open"></i><h3>No products found</h3><p>Add your first product to get started</p></div></td></tr>';
+
+        renderPagination('productsPagination', totalPages, currentProductPage, (p) => { currentProductPage = p; renderProductsTable(); });
+    }
+
+    window.filterProducts = function() { currentProductPage = 1; renderProductsTable(); };
+    window.filterByCategory = function(cat) { currentProductFilter = cat; currentProductPage = 1; renderProductsTable(); };
+
+    // ==========================================
+    // ORDERS MANAGEMENT
+    // ==========================================
+
+    async function loadOrdersData() {
+        try {
+            const { data: orders, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
+            if (error) throw error;
+            allOrders = orders || [];
+            renderOrdersTable();
+        } catch (err) {
+            console.error('Orders error:', err);
+            showToast('Failed to load orders', 'error');
+        }
+    }
+
+    function renderOrdersTable() {
+        let filtered = allOrders;
+        if (currentOrderFilter !== 'all') filtered = filtered.filter(o => o.status === currentOrderFilter);
+        const search = document.getElementById('orderSearch')?.value.toLowerCase() || '';
+        if (search) filtered = filtered.filter(o => (o.customer_name||'').toLowerCase().includes(search) || (o.id||'').toLowerCase().includes(search));
+
+        const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
+        const start = (currentOrderPage - 1) * ITEMS_PER_PAGE;
+        const pageItems = filtered.slice(start, start + ITEMS_PER_PAGE);
+
+        const statusColors = { pending: 'badge-warning', processing: 'badge-info', shipped: 'badge-primary', delivered: 'badge-success', cancelled: 'badge-danger' };
+
+        const tbody = document.getElementById('ordersTable');
+        tbody.innerHTML = pageItems.length ? pageItems.map(o => `
+            <tr>
+                <td><strong style="color:var(--primary-dark)">#${o.id?.slice(0,8)||'N/A'}</strong></td>
+                <td>${o.customer_name||'N/A'}</td>
+                <td style="font-size:0.85rem;color:var(--text-light)">${o.phone||'N/A'}<br>${o.email||''}</td>
+                <td class="price-cell">₹${o.total_amount||0}</td>
+                <td>
+                    <select class="status-select" onchange="updateOrderStatus('${o.id}', this.value)" style="border-color:${o.status==='delivered'?'var(--success)':o.status==='cancelled'?'var(--danger)':o.status==='pending'?'var(--warning)':'var(--info)'}">
+                        <option value="pending" ${o.status==='pending'?'selected':''}>Pending</option>
+                        <option value="processing" ${o.status==='processing'?'selected':''}>Processing</option>
+                        <option value="shipped" ${o.status==='shipped'?'selected':''}>Shipped</option>
+                        <option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option>
+                        <option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option>
+                    </select>
+                </td>
+                <td style="font-size:0.8rem;color:var(--text-light)">${new Date(o.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}<br><span style="font-size:0.75rem">${new Date(o.created_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span></td>
+                <td>
+                    <div class="actions-cell">
+                        <button class="btn-action btn-view" onclick="viewOrder('${o.id}')" title="View Details"><i class="fas fa-eye"></i></button>
+                    </div>
+                </td>
+            </tr>
+        `).join('') : '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-inbox"></i><h3>No orders found</h3><p>Orders will appear here when customers place them</p></div></td></tr>';
+
+        renderPagination('ordersPagination', totalPages, currentOrderPage, (p) => { currentOrderPage = p; renderOrdersTable(); });
+    }
+
+    window.filterOrders = function() { currentOrderPage = 1; renderOrdersTable(); };
+    window.filterOrderStatus = function(status) { currentOrderFilter = status; currentOrderPage = 1; renderOrdersTable(); };
+
+    window.updateOrderStatus = async function(id, status) {
+        try {
+            const { error } = await supabase.from('orders').update({ status }).eq('id', id);
+            if (error) throw error;
+            showToast(`Order status updated to ${status}!`, 'success');
+            loadOrdersData();
+            loadDashboard();
+        } catch (err) {
+            showToast('Error updating status', 'error');
+        }
+    };
+
+    window.viewOrder = async function(id) {
+        try {
+            const { data: order } = await supabase.from('orders').select('*').eq('id', id).single();
+            if (!order) return;
+            const products = Array.isArray(order.products) ? order.products : [];
+            document.getElementById('orderModalBody').innerHTML = `
+                <div class="order-detail-grid">
+                    <div class="order-detail-item"><h4>Order ID</h4><p>#${order.id?.slice(0,12)||'N/A'}</p></div>
+                    <div class="order-detail-item"><h4>Date</h4><p>${new Date(order.created_at).toLocaleString('en-IN')}</p></div>
+                    <div class="order-detail-item"><h4>Customer</h4><p>${order.customer_name||'N/A'}</p></div>
+                    <div class="order-detail-item"><h4>Phone</h4><p>${order.phone||'N/A'}</p></div>
+                    <div class="order-detail-item"><h4>Email</h4><p>${order.email||'N/A'}</p></div>
+                    <div class="order-detail-item"><h4>Address</h4><p>${order.address||'N/A'}</p></div>
+                    <div class="order-detail-item"><h4>Status</h4><p><span class="badge ${order.status==='delivered'?'badge-success':order.status==='cancelled'?'badge-danger':order.status==='pending'?'badge-warning':'badge-info'}">${(order.status||'Pending').charAt(0).toUpperCase()+(order.status||'pending').slice(1)}</span></p></div>
+                    <div class="order-detail-item"><h4>Total Amount</h4><p style="font-size:1.2rem;color:var(--primary-dark);font-weight:700">₹${order.total_amount||0}</p></div>
+                </div>
+                <h4 style="margin:20px 0 10px;font-size:0.85rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px">Products Ordered</h4>
+                <ul class="order-products-list">
+                    ${products.length ? products.map(pr => `<li><span>${pr.name||'Product'} x${pr.qty||1}</span><span>₹${(pr.price||0)*(pr.qty||1)}</span></li>`).join('') : '<li><span>No product details</span></li>'}
+                    <li style="border-top:2px solid var(--border);margin-top:10px;padding-top:15px"><span style="font-weight:600">Total</span><span style="font-size:1.1rem;color:var(--primary-dark)">₹${order.total_amount||0}</span></li>
+                </ul>
+            `;
+            document.getElementById('orderModal').classList.add('active');
+        } catch (err) {
+            showToast('Error loading order details', 'error');
+        }
+    };
+
+    window.closeOrderModal = function() { document.getElementById('orderModal').classList.remove('active'); };
+
+    // ==========================================
+    // PAGINATION
+    // ==========================================
+
+    function renderPagination(containerId, totalPages, currentPage, onChange) {
+        const container = document.getElementById(containerId);
+        if (totalPages <= 1) { container.innerHTML = ''; return; }
+        let html = `<button class="page-btn" onclick="window.changePage(${currentPage-1},${totalPages},'${containerId}')" ${currentPage===1?'disabled':''}><i class="fas fa-chevron-left"></i></button>`;
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="window.changePage(${i},${totalPages},'${containerId}')">${i}</button>`;
+            } else if (i === currentPage - 2 || i === currentPage + 2) {
+                html += `<span style="color:var(--text-light);padding:0 5px">...</span>`;
+            }
+        }
+        html += `<button class="page-btn" onclick="window.changePage(${currentPage+1},${totalPages},'${containerId}')" ${currentPage===totalPages?'disabled':''}><i class="fas fa-chevron-right"></i></button>`;
+        container.innerHTML = html;
+    }
+
+    window.changePage = function(page, totalPages, containerId) {
+        if (page < 1 || page > totalPages) return;
+        if (containerId === 'productsPagination') {
+            currentProductPage = page;
+            renderProductsTable();
+        } else {
+            currentOrderPage = page;
+            renderOrdersTable();
+        }
+    };
+
+    // ==========================================
+    // PRODUCT MODAL (ADD / EDIT)
+    // ==========================================
+
+    window.openProductModal = function(productId = null) {
+        editingProduct = productId;
+        document.getElementById('modalTitle').innerHTML = productId
+            ? '<i class="fas fa-edit" style="color:var(--primary);margin-right:8px"></i> Edit Product'
+            : '<i class="fas fa-plus-circle" style="color:var(--primary);margin-right:8px"></i> Add Product';
+        document.getElementById('productModal').classList.add('active');
+
+        if (productId) {
+            supabase.from('products').select('*').eq('id', productId).single().then(({data}) => {
+                if (data) {
+                    document.getElementById('productName').value = data.name;
+                    document.getElementById('productPrice').value = data.price;
+                    document.getElementById('productOriginalPrice').value = data.original_price || '';
+                    document.getElementById('productDiscount').value = data.discount || '';
+                    document.getElementById('productCategory').value = data.category;
+                    document.getElementById('productBadge').value = data.badge || '';
+                    document.getElementById('productRating').value = data.rating || '4.2';
+                    document.getElementById('productDescription').value = data.description || '';
+                    document.getElementById('productFeatures').value = Array.isArray(data.features) ? data.features.join(', ') : '';
+                    document.getElementById('productInStock').checked = data.in_stock;
+                    if (data.image) {
+                        document.getElementById('imagePreview').innerHTML = `<img src="${data.image}" alt="Preview">`;
+                    }
+                }
+            });
+        } else {
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productOriginalPrice').value = '';
+            document.getElementById('productDiscount').value = '';
+            document.getElementById('productBadge').value = '';
+            document.getElementById('productRating').value = '4.2';
+            document.getElementById('productDescription').value = '';
+            document.getElementById('productFeatures').value = '';
+            document.getElementById('productInStock').checked = true;
+            document.getElementById('imagePreview').innerHTML = `<div class="placeholder"><i class="fas fa-cloud-upload-alt"></i><span>Click to upload image</span></div>`;
+        }
+    };
+
+    window.closeProductModal = function() {
+        document.getElementById('productModal').classList.remove('active');
+        editingProduct = null;
+    };
+
+    window.previewImage = function(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('imagePreview').innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    window.saveProduct = async function() {
+        try {
+            const name = sanitizeInput(document.getElementById('productName').value.trim());
+            const price = parseInt(document.getElementById('productPrice').value);
+            const originalPrice = parseInt(document.getElementById('productOriginalPrice').value) || price;
+            const discount = sanitizeInput(document.getElementById('productDiscount').value);
+            const category = document.getElementById('productCategory').value;
+            const badge = sanitizeInput(document.getElementById('productBadge').value);
+            const rating = document.getElementById('productRating').value || '4.2';
+            const description = sanitizeInput(document.getElementById('productDescription').value);
+            const features = document.getElementById('productFeatures').value.split(',').map(f => sanitizeInput(f.trim())).filter(f => f);
+            const inStock = document.getElementById('productInStock').checked;
+            
+            if (!name || !price) {
+                showToast('Name and price are required!', 'error');
+                return;
+            }
+
+            const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+            let imageUrl = null;
+            const fileInput = document.getElementById('productImage');
+            
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast('Image too large! Max 5MB allowed.', 'error');
+                    return;
+                }
+                
+                const fileExt = file.name.split('.').pop().toLowerCase();
+                const allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                if (!allowedExts.includes(fileExt)) {
+                    showToast('Invalid image format! Use JPG, PNG, GIF, or WEBP.', 'error');
+                    return;
+                }
+                
+                const fileName = `${slug}-${Date.now()}.${fileExt}`;
+
+                try {
+                    const { data: uploadData, error: uploadError } = await supabase.storage
+                        .from('product-images')
+                        .upload(fileName, file, { cacheControl: '3600', upsert: false });
+
+                    if (uploadError) {
+                        console.error('Storage upload error:', uploadError);
+                        showToast('Image upload failed: ' + uploadError.message, 'warning');
+                    } else {
+                        const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(fileName);
+                        imageUrl = urlData.publicUrl;
+                    }
+                } catch (uploadErr) {
+                    console.error('Upload exception:', uploadErr);
+                    showToast('Image upload failed. Saving without image.', 'warning');
+                }
+            }
+
+            const productData = {
+                name, slug, price, original_price: originalPrice,
+                discount: discount || null, category,
+                badge: badge || null, rating: rating || '4.2',
+                description: description || null,
+                features: features.length > 0 ? features : null,
+                in_stock: inStock, reviews: '0'
+            };
+
+            if (imageUrl) {
+                productData.image = imageUrl;
+                productData.thumbnails = [imageUrl];
+            } else if (editingProduct) {
+                const existing = allProducts.find(p => p.id === editingProduct);
+                if (existing && existing.image) {
+                    productData.image = existing.image;
+                    productData.thumbnails = existing.thumbnails || [existing.image];
+                }
+            }
+
+            const saveBtn = document.querySelector('.modal-footer .btn-save');
+            const originalBtnText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            saveBtn.disabled = true;
+
+            if (editingProduct) {
+                const { error } = await supabase.from('products').update(productData).eq('id', editingProduct).select();
+                if (error) throw error;
+                showToast('Product updated successfully!', 'success');
+            } else {
+                const { error } = await supabase.from('products').insert([productData]).select();
+                if (error) throw error;
+                showToast('Product added successfully!', 'success');
+            }
+
+            closeProductModal();
+            await loadProductsData();
+            await loadDashboard();
+            
+        } catch (err) {
+            console.error('Save error:', err);
+            showToast('Error: ' + (err.message || err), 'error');
+        } finally {
+            const saveBtn = document.querySelector('.modal-footer .btn-save');
+            if (saveBtn) {
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Product';
+                saveBtn.disabled = false;
+            }
+        }
+    };
+
+    window.editProduct = function(id) { openProductModal(id); };
+
+    window.toggleStock = async function(id, newStatus) {
+        try {
+            const { error } = await supabase.from('products').update({ in_stock: newStatus }).eq('id', id);
+            if (error) throw error;
+            showToast(`Stock ${newStatus ? 'enabled' : 'disabled'}!`, 'success');
+            loadProductsData();
+            loadDashboard();
+        } catch (err) {
+            showToast('Error updating stock', 'error');
+        }
+    };
+
+    // ==========================================
+    // DELETE PRODUCT
+    // ==========================================
+
+    window.openDeleteModal = function(id) {
+        document.getElementById('deleteProductId').value = id;
+        document.getElementById('deleteModal').classList.add('active');
+    };
+
+    window.closeDeleteModal = function() {
+        document.getElementById('deleteModal').classList.remove('active');
+        document.getElementById('deleteProductId').value = '';
+    };
+
+    window.confirmDelete = async function() {
+        const id = document.getElementById('deleteProductId').value;
+        if (!id) return;
+
+        try {
+            const { data: product, error: fetchError } = await supabase.from('products').select('*').eq('id', id).single();
+            if (fetchError || !product) {
+                showToast('Product not found!', 'error');
+                return;
+            }
+
+            const { created_at, sort_order, ...productToSave } = product;
+            
+            const { error: insertError } = await supabase.from('deleted_products').insert([{
+                id: product.id, original_id: product.id,
+                name: product.name, slug: product.slug,
+                price: product.price, original_price: product.original_price,
+                discount: product.discount, category: product.category,
+                badge: product.badge, rating: product.rating,
+                description: product.description, features: product.features,
+                image: product.image, thumbnails: product.thumbnails,
+                in_stock: product.in_stock, reviews: product.reviews,
+                deleted_at: new Date().toISOString()
+            }]);
+
+            if (insertError) {
+                showToast('Recycle bin error: ' + insertError.message, 'error');
+                return;
+            }
+
+            const { error: deleteError } = await supabase.from('products').delete().eq('id', id);
+            if (deleteError) throw deleteError;
+
+            showToast('Product moved to Recycle Bin!', 'success');
+            closeDeleteModal();
+            loadProductsData();
+            loadDashboard();
+            loadRecycleCount();
+            
+        } catch (err) {
+            showToast('Error: ' + err.message, 'error');
+        }
+    };
+
+    // ==========================================
+    // TOAST NOTIFICATIONS
+    // ==========================================
+
+    function showToast(message, type) {
+        const toast = document.getElementById('toast');
+        toast.innerHTML = `<i class="fas ${type==='success'?'fa-check-circle':type==='error'?'fa-times-circle':'fa-exclamation-circle'}"></i> ${message}`;
+        toast.className = `toast toast-${type} show`;
+        setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+    window.showToast = showToast;
+
+    function sanitizeInput(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    // ==========================================
+    // DRAG & DROP SORTING
+    // ==========================================
+
+    let draggedRow = null;
+
+    window.handleDragStart = function(e, row) {
+        draggedRow = row;
+        row.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', row.dataset.id);
+    };
+
+    window.handleDragOver = function(e, row) {
+        e.preventDefault();
+        if (!draggedRow || row === draggedRow) return;
+        document.querySelectorAll('tr.drag-over').forEach(r => r.classList.remove('drag-over'));
+        row.classList.add('drag-over');
+    };
+
+    window.handleDragEnter = function(e, row) { e.preventDefault(); };
+
+    window.handleDrop = function(e, row) {
+        e.preventDefault();
+        document.querySelectorAll('tr.drag-over').forEach(r => r.classList.remove('drag-over'));
+        if (!draggedRow || row === draggedRow) return;
+
+        const tbody = document.getElementById('productsTable');
+        const allRows = Array.from(tbody.querySelectorAll('tr[data-id]'));
+        const fromIndex = allRows.indexOf(draggedRow);
+        const toIndex = allRows.indexOf(row);
+
+        if (fromIndex === -1 || toIndex === -1) return;
+
+        if (fromIndex < toIndex) row.after(draggedRow);
+        else row.before(draggedRow);
+
+        const item = allProducts.splice(fromIndex, 1)[0];
+        allProducts.splice(toIndex, 0, item);
+
+        autoSaveOrder();
+    };
+
+    window.handleDragEnd = function(e, row) {
+        row.classList.remove('dragging');
+        document.querySelectorAll('tr.drag-over').forEach(r => r.classList.remove('drag-over'));
+        draggedRow = null;
+    };
+
+    async function autoSaveOrder() {
+        const tbody = document.getElementById('productsTable');
+        const rows = tbody.querySelectorAll('tr[data-id]');
+        const updates = [];
+
+        rows.forEach((row, index) => {
+            const id = row.dataset.id;
+            updates.push({ id, sort_order: index + 1 });
+            const product = allProducts.find(p => p.id === id);
+            if (product) product.sort_order = index + 1;
+        });
+
+        try {
+            for (const update of updates) {
+                await supabase.from('products').update({ sort_order: update.sort_order }).eq('id', update.id);
+            }
+            showToast('Order saved!', 'success');
+        } catch (err) {
+            console.error('Auto-save error:', err);
+        }
+    }
+
+    // ==========================================
+    // KEYBOARD SHORTCUTS
+    // ==========================================
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeProductModal();
+            closeOrderModal();
+            closeDeleteModal();
+        }
+    });
+
+    // ==========================================
+    // CHART ANIMATION KEYFRAMES
+    // ==========================================
+
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes growUp { from { height: 0; opacity: 0; } to { opacity: 1; } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    `;
+    document.head.appendChild(style);
+
+    // ==========================================
+    // PROFILE FUNCTIONS
+    // ==========================================
+
+    window.showProfileSection = function(section, el) {
+        document.querySelectorAll('.profile-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.profile-menu li').forEach(l => l.classList.remove('active'));
+        document.getElementById('profile' + section.charAt(0).toUpperCase() + section.slice(1)).classList.add('active');
+        if (el) el.classList.add('active');
+    };
+
+    window.updateAvatar = async function(input) {
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('profileAvatarImg').src = e.target.result;
+            document.getElementById('profileAvatarImg').style.display = 'block';
+            const sidebarImg = document.getElementById('sidebarAvatar');
+            if (sidebarImg) { sidebarImg.src = e.target.result; sidebarImg.style.display = 'block'; }
+        };
+        reader.readAsDataURL(file);
+
+        try {
+            const fileName = `admin-avatar-${Date.now()}.${file.name.split('.').pop()}`;
+            const { data, error } = await supabase.storage.from('product-images').upload(fileName, file);
+            if (error) throw error;
+            const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(fileName);
+            localStorage.setItem('adminAvatar', urlData.publicUrl);
+            showToast('Profile photo updated!', 'success');
+            logActivity('Updated profile photo');
+        } catch (err) {
+            showToast('Error uploading photo', 'error');
+        }
+    };
+
+    window.updateProfile = async function(e) {
+        e.preventDefault();
+        const profile = {
+            fullName: document.getElementById('profileFullName').value,
+            displayName: document.getElementById('profileDisplayName').value,
+            email: document.getElementById('profileEmail').value,
+            phone: document.getElementById('profilePhone').value,
+            storeName: document.getElementById('profileStoreName').value,
+            bio: document.getElementById('profileBio').value
+        };
+        localStorage.setItem('adminProfile', JSON.stringify(profile));
+        document.getElementById('profileName').textContent = profile.displayName;
+        showToast('Profile updated successfully!', 'success');
+        logActivity('Updated profile information');
+    };
+
+    // ==========================================
+    // PASSWORD STRENGTH METER
+    // ==========================================
+
+    function initPasswordStrength() {
+        const newPassInput = document.getElementById('newPassword');
+        if (newPassInput) {
+            newPassInput.addEventListener('input', function() {
+                const val = this.value;
+                const bars = document.querySelectorAll('.strength-bar');
+                const text = document.getElementById('strengthText');
+                let score = 0;
+                if (val.length > 5) score++;
+                if (/[A-Z]/.test(val)) score++;
+                if (/[0-9]/.test(val)) score++;
+                if (/[^A-Za-z0-9]/.test(val)) score++;
+
+                const colors = ['var(--border)','var(--danger)','var(--warning)','var(--primary)','var(--success)'];
+                const labels = ['Type a password...','Weak','Fair','Good','Strong'];
+
+                bars.forEach((bar, i) => bar.style.background = i < score ? colors[score] : 'var(--border)');
+                text.textContent = labels[score];
+                text.style.color = score > 0 ? colors[score] : 'var(--text-light)';
+            });
+        }
+    }
+
+    // ==========================================
+    // PASSWORD UPDATE (Now uses Supabase Auth)
+    // ==========================================
+
+    window.updatePassword = async function(e) {
+        e.preventDefault();
+        
+        const current = document.getElementById('currentPassword').value;
+        const newPass = document.getElementById('newPassword').value;
+        const confirm = document.getElementById('confirmPassword').value;
+
+        if (newPass !== confirm) {
+            showToast('New passwords do not match!', 'error');
+            return;
+        }
+        
+        if (newPass.length < 6) {
+            showToast('Password must be at least 6 characters!', 'error');
+            return;
+        }
+
+        try {
+            // Update password via Supabase Auth
+            const { error } = await supabase.auth.updateUser({ password: newPass });
+            
+            if (error) throw error;
+            
+            showToast('Password updated successfully!', 'success');
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            logActivity('Changed password');
+        } catch (err) {
+            showToast('Error: ' + err.message, 'error');
+        }
+    };
+
+    // ==========================================
+    // DATA EXPORT
+    // ==========================================
+
+    window.exportData = async function() {
+        try {
+            const { data: products } = await supabase.from('products').select('*');
+            const { data: orders } = await supabase.from('orders').select('*');
+            const blob = new Blob([JSON.stringify({products,orders,exportedAt:new Date().toISOString()},null,2)], {type:'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `laxmi-frames-backup-${new Date().toISOString().split('T')[0]}.json`; a.click();
+            showToast('Data exported!', 'success');
+        } catch(err) {
+            showToast('Export failed', 'error');
+        }
+    };
+
+    // ==========================================
+    // PREFERENCES UPDATE
+    // ==========================================
+
+    window.updatePreferences = function(e) {
+    e.preventDefault();
+    const prefs = {
+        emailNotif: document.getElementById('prefEmailNotif').checked,
+        sound: document.getElementById('prefSound').checked,
+        autoSave: document.getElementById('prefAutoSave').checked,
+        itemsPerPage: parseInt(document.getElementById('prefItemsPerPage').value)
+    };
+    localStorage.setItem('adminPrefs', JSON.stringify(prefs));
+    
+    window.ITEMS_PER_PAGE = prefs.itemsPerPage;
+    
+    showToast('Preferences saved!', 'success');
+    
+    currentProductPage = 1;
+    renderProductsTable();
+};
+
+    // ==========================================
+    // CLEAR ALL DATA
+    // ==========================================
+
+    window.clearAllData = async function() {
+        if (!confirm('⚠️ WARNING: This will delete ALL products and orders permanently!\\n\\nAre you absolutely sure?')) return;
+        if (!confirm('FINAL WARNING: This action CANNOT be undone!\\n\\nType "DELETE" to confirm?')) return;
+
+        try {
+            await supabase.from('products').delete().neq('id', '0');
+            await supabase.from('orders').delete().neq('id', '0');
+            showToast('All data cleared!', 'success');
+            loadAllData();
+            logActivity('Cleared all store data');
+        } catch (err) {
+            showToast('Error clearing data', 'error');
+        }
+    };
+
+    // ==========================================
+    // ACTIVITY LOG
+    // ==========================================
+
+    async function logActivity(action) {
+        const activities = JSON.parse(localStorage.getItem('adminActivity') || '[]');
+        activities.unshift({
+            action, time: new Date().toISOString(),
+            icon: action.includes('delete') ? 'delete' : action.includes('password') ? 'login' : action.includes('photo') ? 'edit' : 'add'
+        });
+        localStorage.setItem('adminActivity', JSON.stringify(activities.slice(0, 20)));
+        
+        try {
+            await supabase.from('activity_log').insert([{ action }]);
+        } catch (err) {
+            console.error('Activity log failed:', err);
+        }
+        
+        renderActivityLog();
+    }
+
+    function renderActivityLog() {
+        const activities = JSON.parse(localStorage.getItem('adminActivity') || '[]');
+        const list = document.getElementById('activityList');
+        if (!list) return;
+
+        const icons = { add: 'fa-plus', edit: 'fa-edit', delete: 'fa-trash', login: 'fa-key' };
+        const colors = { add: 'add', edit: 'edit', delete: 'delete', login: 'login' };
+
+        list.innerHTML = activities.length ? activities.map(a => `
+            <li>
+                <i class="fas ${icons[a.icon] || 'fa-circle'} ${colors[a.icon] || ''}"></i>
+                <span>${a.action}</span>
+                <span class="time">${new Date(a.time).toLocaleString('en-IN', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'})}</span>
+            </li>
+        `).join('') : '<li style="color:var(--text-light);text-align:center;padding:30px">No activity yet</li>';
+    }
+
+    // ==========================================
+    // RECYCLE BIN
+    // ==========================================
+
+    async function loadRecycleBin() {
+        try {
+            const { data, error } = await supabase.from('deleted_products').select('*').order('deleted_at', { ascending: false });
+            if (error) throw error;
+
+            const tbody = document.getElementById('recycleTable');
+            document.getElementById('recycleCount').textContent = data?.length || 0;
+
+            tbody.innerHTML = data?.length ? data.map(p => `
+                <tr>
+                    <td>
+                        <div class="product-cell">
+                            <img src="${p.image || 'images/placeholder.png'}" class="product-img" alt="${p.name}" onerror="this.src='images/placeholder.png'">
+                            <div class="product-info-cell"><h4>${p.name}</h4></div>
+                        </div>
+                    </td>
+                    <td><span class="cat-tag ${p.category}">${p.category === 'frames' ? 'God Frames' : p.category === 'samagri' ? 'Puja Samagri' : 'Canvas & Posters'}</span></td>
+                    <td class="price-cell">₹${p.price}</td>
+                    <td style="font-size:0.8rem;color:var(--text-light)">${new Date(p.deleted_at).toLocaleDateString('en-IN')}</td>
+                    <td>
+                        <div class="actions-cell">
+                            <button class="btn-action btn-edit" onclick="restoreProduct('${p.id}')" title="Restore"><i class="fas fa-trash-restore"></i></button>
+                            <button class="btn-action btn-delete" onclick="permanentDelete('${p.id}')" title="Delete Forever"><i class="fas fa-times"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('') : '<tr><td colspan="5"><div class="empty-state"><i class="fas fa-inbox"></i><h3>Recycle Bin Empty</h3><p>Deleted products will appear here</p></div></td></tr>';
+
+        } catch (err) {
+            showToast('Error loading recycle bin', 'error');
+        }
+    }
+
+    window.restoreProduct = async function(id) {
+        try {
+            const { data: product, error: fetchError } = await supabase.from('deleted_products').select('*').eq('id', id).single();
+            if (fetchError || !product) {
+                showToast('Product not found in recycle bin!', 'error');
+                return;
+            }
+
+            const { deleted_at, original_id, ...productData } = product;
+            const { error: insertError } = await supabase.from('products').insert([productData]);
+            if (insertError) {
+                showToast('Error restoring: ' + insertError.message, 'error');
+                return;
+            }
+
+            await supabase.from('deleted_products').delete().eq('id', id);
+            showToast('Product restored!', 'success');
+            loadRecycleBin();
+            loadProductsData();
+            loadDashboard();
+            
+        } catch (err) {
+            showToast('Error restoring: ' + err.message, 'error');
+        }
+    };
+
+    window.permanentDelete = async function(id) {
+        if (!confirm('⚠️ PERMANENTLY DELETE? This cannot be undone!')) return;
+        try {
+            const { error } = await supabase.from('deleted_products').delete().eq('id', id);
+            if (error) throw error;
+            showToast('Permanently deleted!', 'success');
+            loadRecycleBin();
+            loadRecycleCount();
+        } catch (err) {
+            showToast('Error: ' + err.message, 'error');
+        }
+    };
+
+    window.emptyRecycleBin = async function() {
+        if (!confirm('⚠️ Delete ALL items permanently?')) return;
+        if (!confirm('FINAL WARNING! This cannot be undone!')) return;
+        try {
+            const { error } = await supabase.from('deleted_products').delete().neq('id', '0');
+            if (error) throw error;
+            showToast('Recycle bin emptied!', 'success');
+            loadRecycleBin();
+            loadRecycleCount();
+        } catch (err) {
+            showToast('Error: ' + err.message, 'error');
+        }
+    };
+
+    window.cleanupOldDeleted = async function() {
+        if (!confirm('Delete items older than 30 days?')) return;
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const { error } = await supabase.from('deleted_products').delete().lt('deleted_at', thirtyDaysAgo.toISOString());
+        if (error) showToast('Cleanup failed', 'error');
+        else { showToast('Old items cleaned up!', 'success'); loadRecycleBin(); }
+    };
+
+    async function loadRecycleCount() {
+        try {
+            const { count, error } = await supabase.from('deleted_products').select('*', { count: 'exact', head: true });
+            if (error) throw error;
+            document.getElementById('recycleCount').textContent = count || 0;
+        } catch (err) {
+            document.getElementById('recycleCount').textContent = '0';
+        }
+    }
+
+    // ==========================================
+    // PROFILE STATS & INITIALIZATION
+    // ==========================================
+
+    function animateCounter(id, target, duration = 1500) {
+        const el = document.getElementById(id);
+        let start = 0;
+        const step = Math.max(1, Math.ceil(target / (duration / 16)));
+        const timer = setInterval(() => {
+            start += step;
+            if (start >= target) { start = target; clearInterval(timer); }
+            el.textContent = start.toLocaleString('en-IN');
+        }, 16);
+    }
+
+    function loadProfileStats() {
+        const activities = JSON.parse(localStorage.getItem('adminActivity') || '[]');
+        const productsAdded = activities.filter(a => a.action.includes('added') || a.action.includes('Product added')).length;
+        animateCounter('statProducts', productsAdded || allProducts.length);
+        animateCounter('statOrders', allOrders.length);
+        const startDate = new Date(localStorage.getItem('adminStartDate') || '2024-01-01');
+        const days = Math.floor((new Date() - startDate) / (1000 * 60 * 60 * 24));
+        animateCounter('statDays', days);
+    }
+
+    function initProfile() {
+        initPasswordStrength();
+        const lastLogin = localStorage.getItem('lastLogin');
+        if (lastLogin) {
+            document.getElementById('lastLogin').textContent = new Date(lastLogin).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+        }
+        localStorage.setItem('lastLogin', new Date().toISOString());
+
+        const saved = localStorage.getItem('adminProfile');
+        if (saved) {
+            const p = JSON.parse(saved);
+            document.getElementById('profileFullName').value = p.fullName || '';
+            document.getElementById('profileDisplayName').value = p.displayName || '';
+            document.getElementById('profileEmail').value = p.email || '';
+            document.getElementById('profilePhone').value = p.phone || '';
+            document.getElementById('profileStoreName').value = p.storeName || '';
+            document.getElementById('profileBio').value = p.bio || '';
+            document.getElementById('profileName').textContent = p.displayName || 'Admin';
+        }
+
+        const avatar = localStorage.getItem('adminAvatar');
+        if (avatar) {
+            document.getElementById('profileAvatarImg').src = avatar;
+            document.getElementById('profileAvatarImg').style.display = 'block';
+        } else {
+            document.getElementById('profileAvatarImg').src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Admin&backgroundColor=D4A017';
+            document.getElementById('profileAvatarImg').style.display = 'block';
+        }
+
+        const prefs = localStorage.getItem('adminPrefs');
+if (prefs) {
+    const p = JSON.parse(prefs);
+    document.getElementById('prefEmailNotif').checked = p.emailNotif;
+    document.getElementById('prefSound').checked = p.sound;
+    document.getElementById('prefAutoSave').checked = p.autoSave;
+    document.getElementById('prefItemsPerPage').value = p.itemsPerPage || '8';
+    
+    window.ITEMS_PER_PAGE = p.itemsPerPage || 8;
+}
+
+        renderActivityLog();
+        const sidebarAvatar = document.getElementById('sidebarAvatar');
+        if (sidebarAvatar) {
+            if (avatar) { sidebarAvatar.src = avatar; sidebarAvatar.style.display = 'block'; }
+            else { sidebarAvatar.src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Admin&backgroundColor=D4A017'; sidebarAvatar.style.display = 'block'; }
+        }
+        loadProfileStats();
+    }
+
+    // ==========================================
+    // CONSTANTS & STATE
+    // ==========================================
+
+    let editingProduct = null;
+    let allProducts = [];
+    let allOrders = [];
+    let currentProductFilter = 'all';
+    let currentOrderFilter = 'all';
+    let currentProductPage = 1;
+    let currentOrderPage = 1;
+    window.ITEMS_PER_PAGE = 8;
+
+
+
+    // ==========================================
+    // INITIALIZATION
+    // ==========================================
+
+    initTheme();
+    checkAuth(); // This replaces the old localStorage check
+
+</script>
+
+
+</body>
+</html>

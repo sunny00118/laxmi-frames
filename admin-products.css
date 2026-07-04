@@ -1,0 +1,324 @@
+/* ========================================== */
+/* ADMIN PRODUCTS & ORDERS STYLES             */
+/* Laxmi Frames & Pooja Samagri Store         */
+/* ========================================== */
+
+/* ------------------------------------------ */
+/* TABLES                                     */
+/* ------------------------------------------ */
+
+.table-wrapper {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 70vh;
+    scroll-behavior: smooth;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+th {
+    background: var(--table-header);
+    font-weight: 600;
+    color: var(--text-light);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 14px 20px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+td {
+    padding: 16px 20px;
+    font-size: 0.88rem;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+tr {
+    transition: background 0.2s;
+}
+
+tr:hover td {
+    background: var(--hover-bg);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.product-cell {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.product-img {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid var(--border);
+    transition: transform 0.3s;
+}
+
+.product-cell:hover .product-img {
+    transform: scale(1.08);
+}
+
+.product-info-cell h4 {
+    font-size: 0.9rem;
+    color: var(--text);
+    margin-bottom: 3px;
+    font-weight: 600;
+}
+
+.product-info-cell span {
+    font-size: 0.75rem;
+    color: var(--text-light);
+}
+
+.price-cell {
+    font-weight: 600;
+    color: var(--text);
+}
+
+.price-cell .original {
+    text-decoration: line-through;
+    color: var(--text-light);
+    font-size: 0.8rem;
+    margin-left: 6px;
+    font-weight: 400;
+}
+
+
+/* ------------------------------------------ */
+/* BADGES                                     */
+/* ------------------------------------------ */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-success { background: var(--success-light); color: var(--success); }
+.badge-danger { background: var(--danger-light); color: var(--danger); }
+.badge-warning { background: var(--warning-light); color: var(--warning); }
+.badge-info { background: var(--info-light); color: var(--info); }
+.badge-primary { background: rgba(212,160,23,0.15); color: var(--primary-dark); }
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-dot.active { background: var(--success); }
+.status-dot.inactive { background: var(--danger); }
+
+
+/* ------------------------------------------ */
+/* CATEGORY TAGS                              */
+/* ------------------------------------------ */
+
+.cat-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: rgba(212,160,23,0.1);
+    color: var(--primary-dark);
+}
+
+.cat-tag.frames { background: rgba(212,160,23,0.1); color: var(--primary-dark); }
+.cat-tag.samagri { background: rgba(46,125,50,0.1); color: var(--success); }
+.cat-tag.canvas { background: rgba(25,118,210,0.1); color: var(--info); }
+
+
+/* ------------------------------------------ */
+/* ORDER STATUS SELECT                        */
+/* ------------------------------------------ */
+
+.status-select {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--input-bg);
+    color: var(--text);
+    font-size: 0.8rem;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.status-select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.status-select option {
+    background: var(--card-bg);
+    color: var(--text);
+}
+
+
+/* ------------------------------------------ */
+/* ACTION BUTTONS                             */
+/* ------------------------------------------ */
+
+.actions-cell {
+    display: flex;
+    gap: 6px;
+}
+
+.btn-action {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    font-size: 0.85rem;
+}
+
+.btn-edit { background: var(--info-light); color: var(--info); }
+.btn-edit:hover { background: var(--info); color: #fff; transform: translateY(-2px); }
+
+.btn-delete { background: var(--danger-light); color: var(--danger); }
+.btn-delete:hover { background: var(--danger); color: #fff; transform: translateY(-2px); }
+
+.btn-view { background: rgba(212,160,23,0.1); color: var(--primary-dark); }
+.btn-view:hover { background: var(--primary); color: #fff; transform: translateY(-2px); }
+
+.btn-toggle { background: var(--success-light); color: var(--success); }
+.btn-toggle:hover { background: var(--success); color: #fff; }
+.btn-toggle.out { background: var(--danger-light); color: var(--danger); }
+.btn-toggle.out:hover { background: var(--danger); color: #fff; }
+
+
+/* ------------------------------------------ */
+/* ORDER DETAIL MODAL                         */
+/* ------------------------------------------ */
+
+.order-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.order-detail-item h4 {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.order-detail-item p {
+    font-size: 0.9rem;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.order-products-list {
+    list-style: none;
+}
+
+.order-products-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.order-products-list li:last-child {
+    border-bottom: none;
+}
+
+.order-products-list li span:first-child {
+    color: var(--text);
+}
+
+.order-products-list li span:last-child {
+    font-weight: 600;
+    color: var(--primary-dark);
+}
+
+
+/* ------------------------------------------ */
+/* DRAG & DROP SORTING                        */
+/* ------------------------------------------ */
+
+.drag-handle {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--hover-bg);
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    transition: all 0.2s;
+    border: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+
+.drag-handle:hover {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+tr.dragging {
+    opacity: 0.5;
+    background: var(--primary-light) !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+tr.drag-over {
+    border-top: 3px solid var(--primary) !important;
+}
+
+
+/* ------------------------------------------ */
+/* PRODUCTS & ORDERS RESPONSIVE               */
+/* ------------------------------------------ */
+
+@media (max-width: 768px) {
+    .order-detail-grid { grid-template-columns: 1fr; }
+    th, td { padding: 12px 15px; font-size: 0.8rem; }
+    .product-img { width: 40px; height: 40px; }
+}
+
+@media (max-width: 480px) {
+    .stat-card { padding: 18px; }
+    .stat-icon { width: 44px; height: 44px; font-size: 1.1rem; }
+    .stat-info h3 { font-size: 1.4rem; }
+    .btn-primary-sm,
+    .btn-outline-sm { padding: 8px 14px; font-size: 0.8rem; }
+}
