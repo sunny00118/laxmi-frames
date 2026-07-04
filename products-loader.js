@@ -332,3 +332,78 @@ export const FALLBACK_PRODUCTS = {
         in_stock: true
     }
 };
+
+
+// ==========================================
+// CART & BUY NOW FUNCTIONS
+// ==========================================
+
+export function addToCart(product) {
+    let cart = JSON.parse(localStorage.getItem('laxmiCart') || '[]');
+    const existing = cart.find(item => item.id === product.id);
+    
+    if (existing) {
+        existing.qty += 1;
+    } else {
+        cart.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            qty: 1
+        });
+    }
+    
+    localStorage.setItem('laxmiCart', JSON.stringify(cart));
+    updateCartCount();
+    showToast(`${product.name} added to cart!`, 'success');
+}
+
+export function buyNow(product) {
+    localStorage.setItem('laxmiCart', JSON.stringify([{
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        qty: 1
+    }]));
+    updateCartCount();
+    window.location.href = 'checkout.html';
+}
+
+export function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('laxmiCart') || '[]');
+    const count = cart.reduce((sum, item) => sum + item.qty, 0);
+    const badges = document.querySelectorAll('.cart-count');
+    badges.forEach(b => b.textContent = count);
+}
+
+export function getCart() {
+    return JSON.parse(localStorage.getItem('laxmiCart') || '[]');
+}
+
+export function clearCart() {
+    localStorage.removeItem('laxmiCart');
+    updateCartCount();
+}
+
+export function getCartTotal() {
+    return getCart().reduce((sum, item) => sum + (item.price * item.qty), 0);
+}
+
+export function removeFromCart(productId) {
+    let cart = getCart();
+    cart = cart.filter(item => item.id !== productId);
+    localStorage.setItem('laxmiCart', JSON.stringify(cart));
+    updateCartCount();
+}
+
+export function updateQty(productId, qty) {
+    let cart = getCart();
+    const item = cart.find(i => i.id === productId);
+    if (item) {
+        item.qty = Math.max(1, qty);
+        localStorage.setItem('laxmiCart', JSON.stringify(cart));
+        updateCartCount();
+    }
+}
